@@ -69,6 +69,7 @@ pred_tl <- augment(mod_tl, newdata = nd, se_fit = TRUE) |>
          lower = .fitted - 1.96 * .se.fit)
 ```
 
+
 # make figure
 ```{r}
 #| title: fig-pred
