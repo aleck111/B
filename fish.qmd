@@ -1,0 +1,90 @@
+---
+title: "fish"
+author: "Alexander Eckerle"
+date: today
+format: html
+editor: source
+---
+
+# Setup
+```{r}
+#| title: setup
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(broom)
+```
+
+# Load data
+```{r}
+#| title: load-data
+#| message: false
+#| warning: false
+
+fish_data <- read_delim(here("doi_10_5061_dryad_6m905qg4h__v20230926/Alo_al_data.csv")) |>
+  mutate(sciname = str_replace(sciname, "Aplochiton zebra ", "Aplochiton zebra"))
+
+fish_info <- read_delim(here("doi_10_5061_dryad_6m905qg4h__v20230926/Fish_info.csv")) |>
+  clean_names() |>
+  rename(sciname = name) |>
+  select(sciname, origin, dispersal, a, b)
+```
+
+# combine data + calculate missing values
+from Word-document (resident/ migratory, coastal/ inland)
+```{r}
+#| title: comb-data
+#| message: false
+#| warning: false
+
+fish_joined <- left_join(fish_data, fish_info, by = "sciname") |>
+  mutate(total_length = a + b * sl) |>
+  mutate(tl = coalesce(total_length, tl))
+```
+
+# linear model target length
+```{r}
+#| title: lm-tl
+#| message: false
+#| warning: false
+
+mod_tl <- lm(data = fish_joined, tl ~ origin * dispersal)
+summary(mod_tl)
+```
+
+# predict tl 
+```{r}
+#| title: lm-tl
+#| message: false
+#| warning: false
+
+nd <- tibble(origin = c("Exotic", "Exotic", "Native", "Native"),
+             dispersal = c("Migratory", "Resident", "Migratory", "Resident")) 
+
+pred_tl <- augment(mod_tl, newdata = nd, se_fit = TRUE) |>
+  mutate(upper = .fitted + 1.96 * .se.fit, 
+         lower = .fitted - 1.96 * .se.fit)
+```
+
+# make figure
+```{r}
+#| title: fig-pred
+#| message: false
+#| warning: false
+
+rep_fig <- ggplot(aes(x = dispersal, 
+                      y = .fitted, 
+                      ymin = lower, 
+                      ymax = upper), 
+                  data = pred_tl) +
+  geom_pointrange(linewidth = 0.8, size = 0.1) +
+  scale_x_discrete(limits=rev) +
+  facet_wrap(facets = vars(origin)) +
+  theme_bw()
+
+rep_fig
+```
+
