@@ -1,0 +1,53 @@
+---
+title: "Assignment 1"
+author: "Alexander Eckerle"
+date: today
+format: 
+  html: 
+    embed-resources: true
+editor: source
+bibliography: Biblio_fish.bib
+---
+
+I wanted to reproduce following figure (Figure 5) from @RN1\
+
+```{r}
+#| label: fig-original
+#| out-width: "491px"
+#| fig-cap: "Original figure (Figure 5, @RN1)."
+#| echo: false
+
+knitr::include_graphics("reproduce_figure.png")
+```
+# PART 1
+
+https://github.com/aleck111/B.git
+I just did not manage to push the folder with the data files to github. So, I will submit them with the html file on mittUiB. 
+
+# PART 2
+I was not able to reproduce the figure as presented in the original publication. It would have taken me a lot more than 3 hours to include the site (coastal/ inland, see part 3). My first idea to include site would have been to compare gps coordinates from the data with the map in the publication where they show which sites were defined as inland and which ones as coastal. It is not well described in the methods how they produced the figure. I used a linear model and came to a quite different result with my predictions:
+
+```{r}
+#| label: fig-rep
+#| out-width: "491px"
+#| fig-cap: "Failed try to reproduce figure 1."
+#| echo: false
+
+knitr::include_graphics("rep_fig.png")
+```
+
+For me, it is hard to tell where the different results come from as I do not know how they prepared the plot. Maybe my model is not ideal. The small standard errors might indicate some fault here.
+
+# PART 3
+**Positive:**\
+• It was quite easy to find the data the figure is based on.\
+• The data is available as csv.\
+• Most column names are self-explanatory (sciname, lat, lon) and all, including the other two (sl an tl), are explained well in the methods part of the publication.\
+• The data has no empty cells (missing values are filled with NA).\
+• How they deal with NAs is well described in the methods part (e.g. how they calculate the missing values in sl or tl if the other one is known).
+
+**Negative:**\
+• One species has a tab at the end on some of the data entries so that not all fish of the same species are automatically counted as the same factor.\
+• The original data consists of 43 different species the publication only includes 25 of them and it is explained nowhere why the other species were dropped ….. \<\<maybe no length measurements exist for these species.\
+• Published data does not tell you which species are resident and which ones are migratory. This is described in another document (Word) for the 25 species included in the study. The factors a and b to calculate tl from sl are also listed in the same table. The Word-document is not published in the same place as the data so that it was necessary to search for it.\
+• The methods describe how the authors defined coastal and inland fairly well. But there are three different parameters they use (municipality directly connected to the sea, direct distance to the coast, and elevation) and if at least two of them are coastal they were considered as such and the other way round. (Fish don’t care about administrative divisions).
