@@ -2,7 +2,9 @@
 title: "fish"
 author: "Alexander Eckerle"
 date: today
-format: html
+format: 
+  html: 
+    embed-resources: true
 editor: source
 ---
 
